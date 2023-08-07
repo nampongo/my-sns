@@ -76,7 +76,7 @@ public class FeedService {
 
     public Page<FeedDto.paged> readFeedPaged(Long userId, Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id"));
-        Page<FeedEntity> feedEntityPage = feedRepository.findAllByUserId(userId, pageable);
+        Page<FeedEntity> feedEntityPage = feedRepository.findAllByUserIdAndAndDeletedIsFalse(userId, pageable);
         return feedEntityPage.map(FeedDto.paged::fromEntity);
     }
 
@@ -98,14 +98,13 @@ public class FeedService {
         log.info("Feed Id {} : 피드의 이미지(idx={})가 삭제되었습니다.", feedId, imageIdx);
     }
 
-
-    // TODO TEST
     public void deleteFeed(Long feedId, UserDto user) throws Exception {
         FeedEntity entity = loadFeedEntitybyId(feedId);
         if (!entity.getUser().getUsername().equals(user.getUsername()))
             throw new Exception("해당 피드에 대한 수정 권한이 없습니다.");
 
         entity.setDeleted(true);
+        feedRepository.save(entity);
         log.info("Feed Id {} : 해당 피드가 삭제되었습니다.", feedId);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.project_2_namyujin.config;
 
 import com.example.project_2_namyujin.security.JwtTokenFilter;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,12 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
-
-    public SecurityConfig(JwtTokenFilter jwtTokenFilter) {
-        this.jwtTokenFilter = jwtTokenFilter;
-    }
 
     @Bean
     // HttpSecurity: 일종의 Builder처럼 인증 권한 관련 설정 적용 가능
@@ -29,14 +27,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                     auth -> auth
                             .requestMatchers(
-                                    "/users/logout",
-                                    "/users/my-profile"
-                            ).authenticated()
-                            .requestMatchers(
                                     "/users/register",
-                                    "/users/login"
+                                    "/users/login",
+                                    "/feeds/user/**"
                             ).anonymous()
-                            .anyRequest().permitAll()
+                            .anyRequest().authenticated()
                 )
                 .sessionManagement(
                         sessionManagement -> sessionManagement

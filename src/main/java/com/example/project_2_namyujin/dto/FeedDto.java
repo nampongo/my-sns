@@ -16,6 +16,17 @@ public class FeedDto {
     private UserEntity user;
     private boolean deleted;
 
+    public static FeedDto fromEntity(FeedEntity entity) {
+        FeedDto dto = new FeedDto();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setContent(entity.getContent());
+        dto.setImageUrls(entity.getImageUrls());
+        dto.setUser(entity.getUser());
+        dto.setDeleted(entity.isDeleted());
+        return dto;
+    }
+
     @Data
     public static class upload {
         private String title;
@@ -29,8 +40,6 @@ public class FeedDto {
         private String firstImage;
 
         public static FeedDto.paged fromEntity(FeedEntity entity) {
-            if (entity.isDeleted()) return null;
-
             FeedDto.paged paged = new FeedDto.paged();
             paged.setTitle(entity.getTitle());
             paged.setUsername(entity.getUser().getUsername());
@@ -40,15 +49,5 @@ public class FeedDto {
 
             return paged;
         }
-    }
-
-    public static FeedDto fromEntity(FeedEntity entity) {
-        FeedDto dto = new FeedDto();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        dto.setContent(entity.getContent());
-        dto.setImageUrls(entity.getImageUrls());
-        dto.setUser(entity.getUser());
-        return dto;
     }
 }
