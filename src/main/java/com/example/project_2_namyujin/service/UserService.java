@@ -1,13 +1,12 @@
 package com.example.project_2_namyujin.service;
 
-import com.example.project_2_namyujin.Repository.UserRepository;
+import com.example.project_2_namyujin.repository.UserRepository;
 import com.example.project_2_namyujin.dto.UserDto;
 import com.example.project_2_namyujin.model.UserEntity;
 import com.example.project_2_namyujin.security.JwtRequestDto;
 import com.example.project_2_namyujin.security.JwtTokenDto;
 import com.example.project_2_namyujin.security.JwtTokenUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,8 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,41 +78,42 @@ public class UserService implements UserDetailsManager {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
-        if(optionalUser.isEmpty())
+        if (optionalUser.isEmpty())
             throw new UsernameNotFoundException(username);
         return UserDto.fromEntity(optionalUser.get());
     }
 
-    public void updateUserImg(MultipartFile file, UserDto user) throws IOException {
-        // (유저의 프로필 이미지) 파일 위치 설정 : resources/static/images/{userId}/profile.png
-        //      -> 프로필 사진 구분을 위해 profile.png로 파일이름 변경
-        UserEntity userEntity = userRepository.findByUsername(user.getUsername()).get();
-        Path path = Paths.get("src/main/resources/static/images/" + userEntity.getId() + "/profile.png");
-        File target = new File(path.toString());
-
-        if (target.exists())
-            throw new FileAlreadyExistsException(user.getUsername() + "의 프로필 사진이 등록되어있습니다.");
-
-        InputStream fileStream = file.getInputStream();
-        FileUtils.copyInputStreamToFile(fileStream, target);
-
-        // (해당 유저의) img 저장 폴더 없으면 만들기
-        File userImgFolder = new File("src/main/resources/static/images/" + userEntity.getId());
+    public void ensureImgFolderandUploadImg(String folderPath, MultipartFile file) {
+        File userImgFolder = new File(folderPath);
         if (!userImgFolder.exists()) {
             try {
                 userImgFolder.mkdir();
-            } catch (Exception e) { e.getStackTrace();}
+            } catch (Exception e) { e.getStackTrace(); }
         }
 
         try {
-            Files.write(path, file.getBytes());
+            Files.write(Paths.get(folderPath + "/" + file.getOriginalFilename()), file.getBytes());
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, e.getMessage());
         }
+    }
 
-        userEntity.setImageurl(path.toString());
+    public void updateUserImg(MultipartFile file, UserDto user) throws IOException {
+        UserEntity userEntity = userRepository.findByUsername(user.getUsername()).get();
+
+        // (유저의 프로필 이미지) 파일 위치 설정 : resources/static/images/{userId}/
+        String folderPath = "src/main/resources/static/images/" + userEntity.getId();
+        ensureImgFolderandUploadImg(folderPath, file);
+
+        // 유저의 프로필 사진이 이미 있을 경우, 이전 사진 삭제
+        if (userEntity.getImageUrl() != null) {
+            new File(userEntity.getImageUrl()).delete();
+            log.info("User Id {} : 기존 프로필 사진 삭제", userEntity.getUsername());
+        }
+
+        userEntity.setImageUrl(folderPath + "/" + file.getOriginalFilename());
         this.userRepository.save(userEntity);
-        log.info("{}의 프로필 사진이 업로드 되었습니다.", userEntity.getUsername());
+        log.info("User Id {} : 프로필 사진이 업로드 되었습니다.", userEntity.getUsername());
     }
 
     @Override

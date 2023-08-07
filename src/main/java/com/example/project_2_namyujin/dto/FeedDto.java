@@ -9,17 +9,42 @@ import java.util.List;
 @Data
 public class FeedDto {
     private Long id;
-    private Long writerId;
     private String title;
     private String content;
 
     private List<String> imageUrls;
     private UserEntity user;
+    private boolean deleted;
+
+    @Data
+    public static class upload {
+        private String title;
+        private String content;
+    }
+
+    @Data
+    public static class paged {
+        private String title;
+        private String username;
+        private String firstImage;
+
+        public static FeedDto.paged fromEntity(FeedEntity entity) {
+            if (entity.isDeleted()) return null;
+
+            FeedDto.paged paged = new FeedDto.paged();
+            paged.setTitle(entity.getTitle());
+            paged.setUsername(entity.getUser().getUsername());
+            if (entity.getImageUrls().isEmpty())
+                paged.setFirstImage("src/main/resources/static/images/default.png");
+            else paged.setFirstImage(entity.getImageUrls().get(0));
+
+            return paged;
+        }
+    }
 
     public static FeedDto fromEntity(FeedEntity entity) {
         FeedDto dto = new FeedDto();
         dto.setId(entity.getId());
-        dto.setWriterId(entity.getWriterId());
         dto.setTitle(entity.getTitle());
         dto.setContent(entity.getContent());
         dto.setImageUrls(entity.getImageUrls());

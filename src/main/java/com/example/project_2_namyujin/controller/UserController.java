@@ -43,7 +43,7 @@ public class UserController {
     }
 
     // 유저 프로필 사진 등록
-    @PutMapping("/{userId}/image")
+    @PutMapping("/image")
     public void uploadImage(
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal UserDto user

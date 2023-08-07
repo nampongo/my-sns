@@ -12,5 +12,11 @@ spring:
     database-platform: org.hibernate.community.dialect.SQLiteDialect
     show-sql: true
 
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
 jwt:
   secret: aaaabbbsdifqbvaesoioegwaaaabbbsdifqbvaesoioegwaaaabbbsdifqbvaes
+
+

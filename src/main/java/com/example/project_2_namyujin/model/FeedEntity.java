@@ -1,5 +1,6 @@
 package com.example.project_2_namyujin.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,16 +14,19 @@ public class FeedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @Column(nullable = false)
-    private Long writerId;
-
     private String title;
     private String content;
 
-    private List<String> imageUrls = new ArrayList<>();
+    private List<String> imageUrls;
+    private boolean deleted;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="user_id")
     private UserEntity user;
+
+    public List<String> addImageUrl(String url) {
+        imageUrls.add(url);
+        return imageUrls;
+    }
+
 }

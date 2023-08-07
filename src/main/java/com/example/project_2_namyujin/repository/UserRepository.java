@@ -1,4 +1,4 @@
-package com.example.project_2_namyujin.Repository;
+package com.example.project_2_namyujin.repository;
 
 import com.example.project_2_namyujin.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

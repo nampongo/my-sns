@@ -19,10 +19,10 @@ public class UserDto implements UserDetails {
     private String password;
     private String email;
     private String phone;
-    private String imageurl;
+    private String imageUrl;
 
     @Data
-    public class register {
+    public static class register {
         private String username;
         private String password;
         private String passwordCheck;
@@ -37,7 +37,7 @@ public class UserDto implements UserDetails {
         details.password = entity.getPassword();
         details.email = entity.getEmail();
         details.phone = entity.getPhone();
-        details.imageurl = entity.getImageurl();
+        details.imageUrl = entity.getImageUrl();
         return details;
     }
 
@@ -47,7 +47,7 @@ public class UserDto implements UserDetails {
         entity.setPassword(password);
         entity.setEmail(email);
         entity.setPhone(phone);
-        entity.setImageurl(imageurl);
+        entity.setImageUrl(imageUrl);
         return entity;
     }
 
