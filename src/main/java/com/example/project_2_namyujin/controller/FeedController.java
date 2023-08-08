@@ -48,11 +48,8 @@ public class FeedController {
 
     // 특정 피드 조회
     @GetMapping("/{feedId}")
-    public FeedDto read(
-            @PathVariable("feedId") Long feedId,
-            @AuthenticationPrincipal UserDto user
-    ) throws Exception {
-        return service.readFeed(feedId, user);
+    public FeedDto read(@PathVariable("feedId") Long feedId) throws Exception {
+        return service.readFeed(feedId);
     }
 
     // 피드의 특정 이미지 삭제

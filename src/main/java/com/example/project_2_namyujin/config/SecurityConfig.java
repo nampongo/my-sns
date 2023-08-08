@@ -30,6 +30,7 @@ public class SecurityConfig {
                                     "/users/register",
                                     "/users/login",
                                     "/feeds/user/**"
+                            // 특정 유저 전체 피드 조회 /feeds/user/{userId}
                             ).anonymous()
                             .anyRequest().authenticated()
                 )

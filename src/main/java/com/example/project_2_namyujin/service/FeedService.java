@@ -1,5 +1,7 @@
 package com.example.project_2_namyujin.service;
 
+import com.example.project_2_namyujin.model.CommentEntity;
+import com.example.project_2_namyujin.repository.CommentRepository;
 import com.example.project_2_namyujin.repository.FeedRepository;
 import com.example.project_2_namyujin.repository.UserRepository;
 import com.example.project_2_namyujin.dto.FeedDto;
@@ -22,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -29,6 +32,7 @@ import java.util.List;
 public class FeedService {
     private final FeedRepository feedRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     public void uploadFeedText(FeedDto.upload feed, UserDto userDto) {
         FeedEntity feedEntity = new FeedEntity();
@@ -53,7 +57,6 @@ public class FeedService {
                 userImgFolder.mkdir();
             } catch (Exception e) { e.getStackTrace(); }
         }
-
         try {
             Files.write(Paths.get(folderPath + "/" + file.getOriginalFilename()), file.getBytes());
         } catch (IOException e) {
@@ -80,8 +83,10 @@ public class FeedService {
         return feedEntityPage.map(FeedDto.paged::fromEntity);
     }
 
-    public FeedDto readFeed(Long feedId, UserDto userDto) throws Exception {
-        return FeedDto.fromEntity(loadFeedEntitybyId(feedId));
+    public FeedDto readFeed(Long feedId) throws Exception {
+        FeedEntity feed = loadFeedEntitybyId(feedId);
+        //feed.setComments(commentRepository.findAllByFeedId(feedId));
+        return FeedDto.fromEntity(feed);
     }
 
     public void deleteFeedImage(Long feedId, int imageIdx, UserDto user) throws Exception {

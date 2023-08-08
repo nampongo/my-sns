@@ -37,7 +37,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String token = authHeader.split(" ")[1];
             if (jwtTokenUtils.validateToken(token)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
-
                 String username = jwtTokenUtils
                         .parseClaims(token)
                         .getSubject();

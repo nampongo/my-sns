@@ -1,5 +1,6 @@
 package com.example.project_2_namyujin.dto;
 
+import com.example.project_2_namyujin.model.CommentEntity;
 import com.example.project_2_namyujin.model.FeedEntity;
 import com.example.project_2_namyujin.model.UserEntity;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class FeedDto {
     private List<String> imageUrls;
     private UserEntity user;
     private boolean deleted;
+    private List<CommentEntity> comments;
 
     public static FeedDto fromEntity(FeedEntity entity) {
         FeedDto dto = new FeedDto();
@@ -24,6 +26,7 @@ public class FeedDto {
         dto.setImageUrls(entity.getImageUrls());
         dto.setUser(entity.getUser());
         dto.setDeleted(entity.isDeleted());
+        dto.setComments(entity.getComments());
         return dto;
     }
 
@@ -46,7 +49,6 @@ public class FeedDto {
             if (entity.getImageUrls().isEmpty())
                 paged.setFirstImage("src/main/resources/static/images/default.png");
             else paged.setFirstImage(entity.getImageUrls().get(0));
-
             return paged;
         }
     }
