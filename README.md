@@ -45,7 +45,7 @@
 ## 📝 댓글 관리
 |METHOD|URI|설명|REQUEST DATA|비고|
 |--|--|--|--|--|
-|POST|/comments|댓글 등록|feedId, content||
+|POST|/comments|댓글 등록|feedId, content||
 |PUT|/comments/{commentId}|댓글 내용 수정|content||
 |DELETE|/comments/{commentId}|댓글 삭제|||
 
